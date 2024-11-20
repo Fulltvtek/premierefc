@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fulltv - Final</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            height: 100vh;
+            background: url('https://simp6.jpg5.su/images3/premiere80ca3f6189f872d0.png') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+            padding-left: 20px;
+        }
+        .logo {
+            margin: 10px 0 20px;
+        }
+        .logo img {
+            width: 50px; /* Imagem bem pequena */
+            height: auto;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+        iframe {
+            width: 100%;
+            height: 350px;
+            border: none;
+            border-radius: 10px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: flex-start;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        button {
+            width: 50%;
+            padding: 10px 20px;
+            background-color: rgba(181, 181, 181, 0.2);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+        button:hover {
+            background-color: rgba(30, 95, 123, 0.8);
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Imagem no topo esquerdo com tamanho pequeno -->
+    <div class="logo">
+        <img src="https://simp6.jpg5.su/images3/capas-full-tv73f60fc1674439df.png" alt="Logo Full TV">
+    </div>
+
+    <div class="container" id="player-container">
+        <iframe src="https://reidoscanais.tv/embed/?id=premiereclubes" allow="encrypted-media" allowfullscreen></iframe>
+    </div>
+    <div class="button-container">
+        <button onclick="loadPlayer('https://reidoscanais.tv/embed/?id=premiereclubes')">Premiere Clubes</button>
+        <button onclick="loadPlayer('https://reidoscanais.tv/embed/?id=premiere2')">Premiere 2</button>
+      <button onclick="loadPlayer('https://reidoscanais.tv/embed/?id=premiere3')">Premiere 3</button>
+        <button onclick="loadPlayer('https://reidoscanais.tv/embed/?id=premiere4')">Premiere 4</button>
+      <button onclick="loadPlayer('https://reidoscanais.tv/embed/?id=premiere5')">Premiere 5</button>
+        <button onclick="loadPlayer('https://reidoscanais.tv/embed/?id=premiere6')">Premiere 6</button>
+    </div>
+
+    <script>
+        function loadPlayer(url) {
+            const playerContainer = document.getElementById('player-container');
+            playerContainer.innerHTML = `<iframe src="${url}" allow="encrypted-media" allowfullscreen></iframe>`;
+        }
+    </script>
+</body>
+</html>

@@ -91,6 +91,87 @@
             background-color: rgba(30, 95, 123, 0.8);
             opacity: 0.8;
         }
+        <style>
+  /* ===== Popup (fundo translúcido) ===== */
+  :root{
+    --popup-overlay: rgba(0,0,0,.6);  /* opacidade do fundo */
+    --popup-radius: 12px;
+    --popup-bg: rgba(17,17,17,.92);   /* caixa do modal */
+    --popup-text: #fff;
+    --popup-shadow: 0 20px 60px rgba(0,0,0,.6);
+    --popup-accent: #1e5f7b;          /* cor do botão principal */
+  }
+
+  .popup{
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    z-index: 10000;                   /* acima de iframes/players */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s ease;
+  }
+  .popup.is-open{
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .popup__overlay{
+    position: absolute;
+    inset: 0;
+    background: var(--popup-overlay);
+    backdrop-filter: blur(2px);
+  }
+  @supports not (backdrop-filter: blur(2px)){
+    .popup__overlay{ background: rgba(0,0,0,.6); }
+  }
+
+  .popup__dialog{
+    position: relative;
+    width: min(92vw, 560px);
+    background: var(--popup-bg);
+    color: var(--popup-text);
+    border-radius: var(--popup-radius);
+    padding: 22px 20px;
+    box-shadow: var(--popup-shadow);
+    border: 1px solid rgba(255,255,255,.08);
+    transform: translateY(12px) scale(.98);
+    transition: transform .25s ease;
+    text-align: left;
+  }
+  .popup.is-open .popup__dialog{
+    transform: translateY(0) scale(1);
+  }
+
+  .popup__header{
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .popup__title{ font-size: 1.25rem; font-weight: 700; }
+  .popup__body{ font-size: .95rem; line-height: 1.5; opacity: .95; }
+
+  .popup__actions{
+    margin-top: 16px; display: flex; gap: 10px; justify-content: flex-end;
+  }
+  .popup__btn{
+    appearance: none; border: 0; cursor: pointer;
+    border-radius: 8px; padding: 10px 14px; font-weight: 700;
+  }
+  .popup__btn--primary{ background: var(--popup-accent); color: #fff; }
+  .popup__btn--ghost{ background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.25); }
+
+  .popup__close{
+    position: absolute; top: 10px; right: 10px;
+    width: 36px; height: 36px; display: grid; place-items: center;
+    border-radius: 50%; border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.06); color: #fff;
+    cursor: pointer; font-size: 22px; line-height: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .popup, .popup__dialog{ transition: none !important; }
+  }
+</style>
     </style>
 </head>
 <body>
@@ -137,6 +218,94 @@
             const playerContainer = document.getElementById('player-container');
             playerContainer.innerHTML = `<iframe src="${url}" allow="encrypted-media" allowfullscreen></iframe>`;
         }
+    <!-- ===== POPUP ===== -->
+<div id="popup" class="popup" role="dialog" aria-modal="true"
+     aria-labelledby="popup-title" aria-describedby="popup-desc"
+     aria-hidden="true">
+  <div class="popup__overlay" data-close-popup></div>
+
+  <div class="popup__dialog" role="document">
+    <button class="popup__close" aria-label="Fechar" data-close-popup>&times;</button>
+
+    <div class="popup__header">
+      <h2 class="popup__title" id="popup-title">ATENÇÂO</h2>
+    </div>
+
+    <div class="popup__body" id="popup-desc">
+      Sua operadora de internet pode bloquear nossos players, se der aviso de erro, tente usar uma VPN para evitar esse bloqueio da anatel. Recomendamos o 1.1.1.1 como vpn, é totalmente gratuito!
+    </div>
+
+    <div class="popup__actions">
+      <button class="popup__btn popup__btn--ghost" data-close-popup>Fechar</button>
+      <button class="popup__btn popup__btn--primary" onclick="closePopup()">Assistir agora</button>
+    </div>
+  </div>
+</div>
+<!-- ===== /POPUP ===== -->
+<script>
+  (function () {
+    const root = document.getElementById('popup');
+    const dialog = root.querySelector('.popup__dialog');
+    let lastActive = null;
+
+    function openPopup() {
+      if (root.classList.contains('is-open')) return;
+      lastActive = document.activeElement;
+      root.classList.add('is-open');
+      root.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      // foca no primeiro elemento focável
+      setTimeout(() => {
+        const first = dialog.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        (first || dialog).focus();
+      }, 0);
+    }
+
+    function closePopup() {
+      root.classList.remove('is-open');
+      root.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (lastActive) lastActive.focus();
+    }
+
+    // Torna público para chamar de qualquer lugar (botão, onload, etc.)
+    window.openPopup = openPopup;
+    window.closePopup = closePopup;
+
+    // Fecha ao clicar no overlay ou em qualquer elemento com [data-close-popup]
+    root.addEventListener('click', (e) => {
+      if (e.target.matches('[data-close-popup]')) closePopup();
+    });
+
+    // Fecha com ESC e faz "focus trap" dentro do modal ao usar TAB
+    document.addEventListener('keydown', (e) => {
+      if (root.classList.contains('is-open') && e.key === 'Escape') {
+        e.preventDefault();
+        closePopup();
+      }
+      if (root.classList.contains('is-open') && e.key === 'Tab') {
+        const focusables = dialog.querySelectorAll(
+          'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        const list = Array.prototype.slice.call(focusables);
+        if (!list.length) return;
+        const idx = list.indexOf(document.activeElement);
+        if (e.shiftKey && (idx <= 0)) {
+          e.preventDefault(); list[list.length - 1].focus();
+        } else if (!e.shiftKey && (idx === list.length - 1)) {
+          e.preventDefault(); list[0].focus();
+        }
+      }
+    });
+
+    // EXEMPLO (opcional): abrir automático 1x por sessão
+    // if (!sessionStorage.getItem('popupShown')) {
+    //   setTimeout(openPopup, 800); // abre após 800ms
+    //   sessionStorage.setItem('popupShown', '1');
+    // }
+  })();
+</script>
+
     </script>
 </body>
 </html>

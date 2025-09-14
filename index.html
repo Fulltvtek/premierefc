@@ -7,15 +7,11 @@
     <title>Fulltv - PREMIERE</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * {margin: 0; padding: 0; box-sizing: border-box;}
         body {
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* Alinhado ao canto esquerdo */
+            align-items: flex-start;
             height: 100vh;
             background: url('https://simp6.selti-delivery.ru/images3/shutterstock_1427590412252f9781fe9a22f4.jpg') no-repeat center center fixed;
             background-size: cover;
@@ -24,73 +20,38 @@
             text-shadow: 1px 1px 2px black;
             padding: 10px;
         }
-        .logo {
-            margin: 10px 0;
-        }
-        .logo img {
-            width: 50px;
-            height: auto;
-        }
+        .logo { margin: 10px 0; }
+        .logo img { width: 50px; height: auto; }
         .container {
             background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 10px;
+            padding: 10px; border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            width: 100%;
-            max-width: 700px;
-            text-align: center;
+            width: 100%; max-width: 700px; text-align: center;
             margin-bottom: 10px;
         }
         iframe {
-            width: 100%;
-            height: 350px; /* Tamanho fixo do player */
-            border: none;
-            border-radius: 10px;
+            width: 100%; height: 350px;
+            border: none; border-radius: 10px;
         }
         .channel-bar {
-            width: 100%;
-            max-width: 700px;
+            width: 100%; max-width: 700px;
             background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            padding: 10px;
-            display: flex;
-            gap: 10px;
-            overflow-x: auto; /* Rolagem horizontal */
-            overflow-y: hidden; /* Impede rolagem vertical */
+            border-radius: 10px; padding: 10px;
+            display: flex; gap: 10px; overflow-x: auto;
+            overflow-y: hidden;
         }
-        .channel-bar::-webkit-scrollbar {
-            height: 8px; /* Altura da barra de rolagem */
-        }
-        .channel-bar::-webkit-scrollbar-thumb {
-            background: rgba(30, 95, 123, 0.8);
-            border-radius: 5px;
-        }
+        .channel-bar::-webkit-scrollbar { height: 8px; }
+        .channel-bar::-webkit-scrollbar-thumb { background: rgba(30, 95, 123, 0.8); border-radius: 5px; }
         .channel-button {
-            background-color: rgba(181, 181, 181, 0.2);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-family: 'Montserrat', sans-serif;
+            background-color: rgba(181,181,181,0.2); color: white;
+            border: none; border-radius: 5px; cursor: pointer;
+            font-size: 14px; font-family: 'Montserrat', sans-serif;
             transition: background-color 0.3s, opacity 0.3s;
-            text-align: center;
-            padding: 10px;
-            width: 100px; /* Tamanho fixo dos botões */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
+            text-align: center; padding: 10px; width: 100px;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
         }
-        .channel-button img {
-            width: 80px;
-            height: 80px;
-            border-radius: 5px;
-        }
-        .channel-button:hover {
-            background-color: rgba(30, 95, 123, 0.8);
-            opacity: 0.8;
-        }
+        .channel-button img { width: 80px; height: 80px; border-radius: 5px; }
+        .channel-button:hover { background-color: rgba(30, 95, 123, 0.8); opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -137,6 +98,66 @@
             const playerContainer = document.getElementById('player-container');
             playerContainer.innerHTML = `<iframe src="${url}" allow="encrypted-media" allowfullscreen></iframe>`;
         }
+    </script>
+
+    <!-- 🔔 Popup de aviso VPN -->
+    <style>
+      .vpn-overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 9999; background: rgba(17,24,39,.6);}
+      .vpn-overlay.vpn-open { display: flex; }
+      .vpn-modal { width: min(92vw, 560px); border-radius: 20px; background: #fff; color: #111; box-shadow: 0 10px 30px rgba(0,0,0,.25); overflow: hidden;}
+      .vpn-bar { height: 6px; background: linear-gradient(90deg, #f59e0b, #ef4444); }
+      .vpn-content { padding: 20px 20px 16px; position: relative; }
+      .vpn-close { border: none; background: transparent; position: absolute; top: 10px; right: 10px; font-size: 22px; cursor: pointer;}
+      .vpn-header { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
+      .vpn-icon { font-size: 28px; }
+      .vpn-title { margin: 0; font-size: 20px; font-weight: 800; }
+      .vpn-text { margin: 8px 0 14px; line-height: 1.5; font-size: 15px; }
+      .vpn-text strong { color: #f59e0b; }
+      .vpn-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+      .vpn-btn { padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; background: #f59e0b; color: #111; border: 1px solid transparent; text-decoration: none;}
+      .vpn-btn:hover { filter: brightness(0.95); }
+      .vpn-secondary { background: transparent; color: #111; border: 1px solid #ddd; }
+      .vpn-footer { margin-top: 10px; font-size: 13px; color: #666; display: flex; justify-content: space-between; align-items: center; }
+    </style>
+
+    <div id="vpn-overlay" class="vpn-overlay" aria-hidden="true">
+      <div class="vpn-modal">
+        <div class="vpn-bar"></div>
+        <div class="vpn-content">
+          <button class="vpn-close" type="button">×</button>
+          <div class="vpn-header">
+            <div class="vpn-icon">⚠️</div>
+            <h2 class="vpn-title">ATENÇÃO!!</h2>
+          </div>
+          <p class="vpn-text">
+            Sua operadora de internet pode <strong>bloquear nossos players</strong>. Se aparecer aviso de erro, tente usar uma <strong>VPN</strong> para evitar esse bloqueio da ANATEL.
+            Recomendamos o <strong>1.1.1.1</strong> como VPN — é totalmente <strong>gratuito</strong>!
+          </p>
+          <div class="vpn-actions">
+            <a class="vpn-btn" href="https://1.1.1.1/" target="_blank" rel="noopener noreferrer">Usar 1.1.1.1 grátis</a>
+            <button class="vpn-btn vpn-secondary" type="button" id="vpn-btn-close">Entendi</button>
+          </div>
+          <div class="vpn-footer">
+            <small>Dica: também funciona no celular.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function(){
+        const overlay=document.getElementById('vpn-overlay');
+        const btnX=overlay.querySelector('.vpn-close');
+        const btnClose=document.getElementById('vpn-btn-close');
+        function open(){overlay.classList.add('vpn-open');}
+        function close(){overlay.classList.remove('vpn-open');}
+        // Sempre abre em toda visita
+        open();
+        btnX.addEventListener('click',close);
+        btnClose.addEventListener('click',close);
+        overlay.addEventListener('click',(e)=>{if(e.target===overlay)close();});
+        document.addEventListener('keydown',(e)=>{if(e.key==='Escape')close();});
+      })();
     </script>
 </body>
 </html>
